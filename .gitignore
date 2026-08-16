@@ -4,3 +4,4 @@ coverage/
 *.log
 .tmp/
 .scratch/
+test/fixtures/bin/record-*.json

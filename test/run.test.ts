@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { describe, it } from 'node:test'
 import { grokAsk, grokImagineImage, grokImagineVideo, runGrok } from '../src/api.ts'
@@ -13,7 +14,7 @@ import {
 } from './helpers.ts'
 
 function recordPath(): string {
-  return join(dirname(FIXTURE_GROK), `record-${process.pid}-${Math.random().toString(16).slice(2)}.json`)
+  return join(tmpdir(), `dsh-grok-stub-record-${process.pid}-${Math.random().toString(16).slice(2)}.json`)
 }
 
 describe('runGrok with PATH stub', () => {
