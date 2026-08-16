@@ -1,0 +1,69 @@
+{
+  "name": "dsh-plugin-grok",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin: drive the local Grok Build CLI for text, image, and video.",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "bin": {
+    "dsh-plugin-grok": "lib/cli.js"
+  },
+  "files": [
+    "lib",
+    "src",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.1.0-rc.6"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test test/*.test.ts",
+    "check": "npm run typecheck && npm run test && npm run build",
+    "prepare": "npm run build",
+    "cli": "tsx src/cli.ts"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
+    "grok",
+    "grok-build",
+    "xai",
+    "imagine",
+    "image-generation",
+    "video-generation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toolazytoname/dsh-plugin-grok.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toolazytoname/dsh-plugin-grok/issues"
+  },
+  "homepage": "https://github.com/toolazytoname/dsh-plugin-grok",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0"
+  }
+}

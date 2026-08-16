@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-plugin-grok
+      name: dsh-plugin-grok

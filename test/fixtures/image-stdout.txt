@@ -1,0 +1,2 @@
+Saved the still at /Users/demo/.grok/sessions/abc/images/foo.png
+Do not describe the pixels.

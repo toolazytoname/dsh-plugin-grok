@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+import { writeFileSync } from 'node:fs'
+
+const recordPath = process.env.DSH_GROK_STUB_RECORD
+if (recordPath) {
+  writeFileSync(
+    recordPath,
+    JSON.stringify(
+      {
+        argv: process.argv.slice(2),
+        cwd: process.cwd(),
+        env: {
+          XAI_API_KEY: process.env.XAI_API_KEY ?? null,
+          HOME: process.env.HOME ?? null,
+        },
+      },
+      null,
+      2,
+    ),
+  )
+}
+
+const exitCode = Number(process.env.DSH_GROK_STUB_EXIT ?? '0')
+const stdout = process.env.DSH_GROK_STUB_STDOUT ?? ''
+process.stdout.write(stdout)
+if (process.env.DSH_GROK_STUB_STDERR) {
+  process.stderr.write(process.env.DSH_GROK_STUB_STDERR)
+}
+process.exit(Number.isFinite(exitCode) ? exitCode : 1)

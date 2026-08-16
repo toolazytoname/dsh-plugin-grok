@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "--prompt-file",
+    "/var/folders/97/kltshgp506g2_dns_p49j75r0000gn/T/dsh-plugin-grok-D223Df/image-3c06b0f8-c664-422b-ae13-20e7b4700dcf.txt",
+    "--always-approve",
+    "--verbatim",
+    "--cwd",
+    "/Users/lazy/Code/dsh-plugin-grok",
+    "--max-turns",
+    "8",
+    "--tools",
+    "image_gen,image_edit",
+    "--no-subagents"
+  ],
+  "cwd": "/Users/lazy/Code/dsh-plugin-grok",
+  "env": {
+    "XAI_API_KEY": null,
+    "HOME": "/var/folders/97/kltshgp506g2_dns_p49j75r0000gn/T/dsh-plugin-grok-home-22035-3ea6a15439579"
+  }
+}

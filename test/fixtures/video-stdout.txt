@@ -1,0 +1,2 @@
+Staged /Users/demo/.grok/sessions/abc/images/foo.png
+then animated /Users/demo/.grok/sessions/abc/videos/bar.mp4
