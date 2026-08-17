@@ -29,6 +29,7 @@ function baseConfig(config: PluginConfig, args: { cwd?: string }, exec?: Exec) {
     home: config.home,
     timeoutMs: config.timeoutMs,
     extraArgs: config.extraArgs,
+    apiKey: config.apiKey,
     cwd: args.cwd,
     signal: exec?.signal,
   }
@@ -39,7 +40,7 @@ export function createTools(config: PluginConfig = {}) {
     {
       name: TOOL_ASK,
       description:
-        'Send a text or coding task to the local Grok Build CLI (logged-in `grok`, headless). Use for writing, review, planning, or code edits. Do not use this for generating images or videos — call grok_imagine_image or grok_imagine_video instead.',
+        'Send a text or coding task to the local Grok Build CLI (headless `grok login` session, or XAI_API_KEY). Use for writing, review, planning, or code edits. Do not use this for generating images or videos — call grok_imagine_image or grok_imagine_video instead.',
       parameters: {
         prompt: {
           type: 'string',
@@ -71,7 +72,7 @@ export function createTools(config: PluginConfig = {}) {
     {
       name: TOOL_IMAGE,
       description:
-        'Generate or edit a still image with the local Grok Imagine tools (`image_gen` / `image_edit`) via the logged-in `grok` CLI. Use when the user wants a picture, poster, cover, illustration, or image edit. Do not use for video clips or for ordinary text/code work.',
+        'Generate or edit a still image with the local Grok Imagine tools (`image_gen` / `image_edit`) via the local `grok` CLI (`grok login` or XAI_API_KEY). Use when the user wants a picture, poster, cover, illustration, or image edit. Do not use for video clips or for ordinary text/code work.',
       parameters: {
         prompt: {
           type: 'string',
@@ -111,7 +112,7 @@ export function createTools(config: PluginConfig = {}) {
     {
       name: TOOL_VIDEO,
       description:
-        'Generate a short video with the local Grok Imagine tools. Grok has no text-to-video: this stages a still (`image_gen` / `image_edit`) then animates it (`image_to_video`). Use when the user wants a clip, animation, or image-to-video. Do not use for stills only or for text/code work.',
+        'Generate a short video with the local Grok Imagine tools (`grok login` or XAI_API_KEY). Grok has no text-to-video: this stages a still (`image_gen` / `image_edit`) then animates it (`image_to_video`). Use when the user wants a clip, animation, or image-to-video. Do not use for stills only or for text/code work.',
       parameters: {
         prompt: {
           type: 'string',

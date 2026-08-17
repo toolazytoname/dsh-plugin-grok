@@ -1,6 +1,6 @@
 # dsh-plugin-grok
 
-DeepSeek Harness plugin that drives **your already-logged-in local Grok Build CLI**.
+DeepSeek Harness plugin that drives **your local Grok Build CLI** — the same `grok` binary, whether you signed in with SuperGrok or exported an API key.
 
 One worker, three jobs:
 
@@ -10,7 +10,7 @@ One worker, three jobs:
 | `grok_imagine_image` | Still images (`image_gen` / `image_edit`) |
 | `grok_imagine_video` | Clips — still first, then `image_to_video` |
 
-It does **not** call `api.x.ai`, does **not** need `XAI_API_KEY`, and is **not** grok2api. Auth is `grok login` on that machine.
+It is **not** grok2api and does **not** call Imagine over raw HTTP. It only execs local `grok`. Auth is whichever Grok Build already accepts.
 
 [中文说明](./README.zh.md)
 
@@ -39,8 +39,12 @@ dsh plugin --profile web add /absolute/path/to/dsh-plugin-grok
 ## Prerequisite
 
 1. Install [Grok Build](https://docs.x.ai/build/overview) so `grok` is on `PATH` (usually `~/.grok/bin/grok`).
-2. Run **`grok login`**. This plugin looks for `~/.grok/auth.json` and refuses to start without it.
-3. In mainland China, set `https_proxy` / `HTTPS_PROXY` (Clash mixed port, often `http://127.0.0.1:7891`). The plugin forwards those vars and **unsets** `XAI_API_KEY`.
+2. Provide **one** of these (same order the official CLI uses):
+   - **`grok login`** — SuperGrok / grok.com session in `~/.grok/auth.json`. This wins if both exist.
+   - **`XAI_API_KEY`** — key from [console.x.ai](https://console.x.ai), for people who never log in. You can also put `apiKey` on the plugin row in `cordis.yml`; env is safer.
+3. In mainland China, set `https_proxy` / `HTTPS_PROXY` (Clash mixed port, often `http://127.0.0.1:7891`). The plugin forwards those vars.
+
+If you are logged in, a leftover `XAI_API_KEY` is **unset** on the child process so Imagine stays on the session pool instead of the API bill.
 
 You do **not** need a live DSH session to develop or test this repo (`npm test` uses a stub `grok`).
 
@@ -50,7 +54,7 @@ You do **not** need a live DSH session to develop or test this repo (`npm test` 
 - **`grok_imagine_image`** — same CLI, tools restricted to `image_gen,image_edit`. Returns absolute image path(s).
 - **`grok_imagine_video`** — Grok has no text-to-video. The prompt tells Grok to stage a still, then call `image_to_video`. Returns absolute video path(s).
 
-Missing `grok`, missing login, empty prompt, non-zero exit, or a media run with no parseable path all **fail closed**.
+Missing `grok`, missing **both** login and `XAI_API_KEY`, empty prompt, non-zero exit, or a media run with no parseable path all **fail closed**.
 
 ## CLI (optional)
 
@@ -63,7 +67,7 @@ npx dsh-plugin-grok video "slow cinematic push-in" --duration 6 --resolution 480
 
 ## Known limits
 
-- SuperGrok / coding-plan **quota** still applies. Image and video are slow and spend Imagine.
+- Login users spend SuperGrok / coding-plan quota. API-key users spend console credits. Image and video are slow either way; a key without Imagine access will fail closed.
 - Video is still-then-animate, not native text-to-video. Default `6s` / `480p`. Cap is `720p`.
 - One local `grok` process per tool call. No ACP / `grok agent stdio` wrapper.
 - DeepSeek Harness is a developer preview; the Cordis `apply` + `ctx.tools.register` contract may drift.

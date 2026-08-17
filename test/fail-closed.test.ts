@@ -27,15 +27,18 @@ describe('fail closed', () => {
     assert.equal(result.code, 'missing_binary')
   })
 
-  it('rejects a home without ~/.grok/auth.json', async () => {
+  it('rejects a home without ~/.grok/auth.json and without XAI_API_KEY', async () => {
     const result = await grokAsk({
       prompt: 'hello',
       home: makeHome(false),
       grokPath: FIXTURE_GROK,
+      env: stubEnv({ XAI_API_KEY: undefined }),
     })
     assert.equal(result.ok, false)
     if (result.ok) return
-    assert.equal(result.code, 'missing_login')
+    assert.equal(result.code, 'missing_auth')
+    assert.match(result.error, /XAI_API_KEY/)
+    assert.match(result.error, /grok login/)
   })
 
   it('rejects grok exit 1 as an error, not success', async () => {

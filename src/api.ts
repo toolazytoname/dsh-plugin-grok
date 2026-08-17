@@ -3,7 +3,7 @@ import { mkdtemp, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { buildArgv } from './argv.js'
-import { isLoggedIn, resolveGrokBin, resolveHome } from './detect.js'
+import { resolveAuth, resolveGrokBin, resolveHome } from './detect.js'
 import { buildGrokEnv } from './env.js'
 import { extractMediaPaths, parseGrokStdout } from './media.js'
 import { buildPrompt } from './prompt.js'
@@ -32,11 +32,16 @@ export function prepareInvocation(request: RunRequest, promptFile: string): Invo
     }
   }
 
-  if (!isLoggedIn(home)) {
+  const auth = resolveAuth({
+    home,
+    apiKey: request.apiKey,
+    env: request.env ?? process.env,
+  })
+  if ('error' in auth) {
     return {
       ok: false,
-      error: `Not logged in. Run \`grok login\` so ${join(home, '.grok', 'auth.json')} exists. This plugin does not use XAI_API_KEY.`,
-      code: 'missing_login',
+      error: auth.error,
+      code: 'missing_auth',
     }
   }
 
@@ -59,7 +64,7 @@ export function prepareInvocation(request: RunRequest, promptFile: string): Invo
       model: request.model,
       extraArgs: request.extraArgs,
     }),
-    env: buildGrokEnv({ home, base: request.env ?? process.env }),
+    env: buildGrokEnv({ home, base: request.env ?? process.env, auth }),
     cwd,
     promptFileContents,
     timeoutMs: request.timeoutMs ?? DEFAULT_TIMEOUT[request.kind],

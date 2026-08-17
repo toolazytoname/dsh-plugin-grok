@@ -49,9 +49,10 @@ describe('buildPrompt', () => {
 })
 
 describe('buildGrokEnv', () => {
-  it('unsets XAI_API_KEY even when the parent env has one', () => {
+  it('unsets XAI_API_KEY on the login path so a leftover key cannot take over', () => {
     const env = buildGrokEnv({
       home: '/tmp/fake-home',
+      auth: { mode: 'login' },
       base: {
         PATH: '/usr/bin',
         XAI_API_KEY: 'xai-secret',
@@ -63,5 +64,14 @@ describe('buildGrokEnv', () => {
     assert.equal(env.HOME, '/tmp/fake-home')
     assert.equal(env.https_proxy, 'http://127.0.0.1:7891')
     assert.ok(env.PATH?.includes(join('/tmp/fake-home', '.grok', 'bin')))
+  })
+
+  it('forwards XAI_API_KEY on the api_key path', () => {
+    const env = buildGrokEnv({
+      home: '/tmp/fake-home',
+      auth: { mode: 'api_key', apiKey: 'xai-from-config' },
+      base: { PATH: '/usr/bin' },
+    })
+    assert.equal(env.XAI_API_KEY, 'xai-from-config')
   })
 })

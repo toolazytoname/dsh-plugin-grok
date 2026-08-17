@@ -5,6 +5,8 @@ export interface PluginConfig {
   home?: string
   timeoutMs?: number
   extraArgs?: string[]
+  /** Used only when ~/.grok/auth.json is missing. Prefer env XAI_API_KEY. */
+  apiKey?: string
 }
 
 export interface RunRequest {
@@ -22,6 +24,7 @@ export interface RunRequest {
   resolution?: '480p' | '720p'
   env?: NodeJS.ProcessEnv
   signal?: AbortSignal
+  apiKey?: string
 }
 
 export interface GrokSuccess {
@@ -43,6 +46,7 @@ export interface GrokFailure {
     | 'empty_prompt'
     | 'missing_binary'
     | 'missing_login'
+    | 'missing_auth'
     | 'grok_failed'
     | 'no_media'
     | 'timeout'

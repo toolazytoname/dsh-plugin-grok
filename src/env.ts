@@ -5,6 +5,7 @@ export function buildGrokEnv(input: {
   home?: string
   pathExtra?: string
   base?: NodeJS.ProcessEnv
+  auth?: { mode: 'login' | 'api_key'; apiKey?: string }
 } = {}): NodeJS.ProcessEnv {
   const base = input.base ?? process.env
   const env: NodeJS.ProcessEnv = { ...base }
@@ -16,6 +17,12 @@ export function buildGrokEnv(input: {
   const pathParts = [input.pathExtra, grokBinDir, env.PATH].filter(Boolean)
   env.PATH = pathParts.join(':')
 
-  delete env.XAI_API_KEY
+  if (input.auth?.mode === 'api_key' && input.auth.apiKey) {
+    env.XAI_API_KEY = input.auth.apiKey
+  } else {
+    // Login sessions must not inherit a leftover API key (CLI prefers
+    // auth.json, but a stray key can still confuse billing or Imagine).
+    delete env.XAI_API_KEY
+  }
   return env
 }

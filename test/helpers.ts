@@ -19,7 +19,11 @@ export function makeHome(loggedIn: boolean): string {
 }
 
 export function stubEnv(overrides: Record<string, string | undefined> = {}): NodeJS.ProcessEnv {
-  const env: NodeJS.ProcessEnv = { ...process.env, ...overrides }
+  const env: NodeJS.ProcessEnv = { ...process.env }
+  for (const [key, value] of Object.entries(overrides)) {
+    if (value === undefined) delete env[key]
+    else env[key] = value
+  }
   delete env.DSH_PLUGIN_GROK_BIN
   return env
 }

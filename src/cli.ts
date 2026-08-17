@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { grokAsk, grokImagineImage, grokImagineVideo } from './api.js'
-import { isLoggedIn, resolveGrokBin, resolveHome } from './detect.js'
+import { resolveAuth, resolveGrokBin, resolveHome } from './detect.js'
 import type { GrokResult } from './types.js'
 
 function usage(): string {
@@ -13,7 +13,7 @@ function usage(): string {
     '  dsh-plugin-grok image <prompt> [--ratio 16:9] [--image /path.png]',
     '  dsh-plugin-grok video <prompt> [--image /path.png] [--duration 6] [--resolution 480p]',
     '',
-    'Requires `grok` on PATH and `grok login`. Does not use XAI_API_KEY.',
+    'Requires `grok` on PATH, plus `grok login` or XAI_API_KEY.',
   ].join('\n')
 }
 
@@ -48,15 +48,21 @@ async function main(argv: string[]): Promise<void> {
   if (command === 'status') {
     const home = resolveHome()
     const bin = resolveGrokBin(undefined, home)
-    const login = isLoggedIn(home)
+    const auth = resolveAuth({ home, env: process.env })
+    const authLine =
+      'error' in auth
+        ? 'none — run grok login or set XAI_API_KEY'
+        : auth.mode === 'login'
+          ? 'login (~/.grok/auth.json)'
+          : 'api_key (XAI_API_KEY)'
     process.stdout.write(
       [
         `grok: ${bin ?? 'not found'}`,
-        `login: ${login ? 'yes' : 'no — run grok login'}`,
+        `auth: ${authLine}`,
         `home: ${home}`,
       ].join('\n') + '\n',
     )
-    process.exit(bin && login ? 0 : 1)
+    process.exit(bin && !('error' in auth) ? 0 : 1)
   }
 
   const ratio = takeFlag(rest, '--ratio')
